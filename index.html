@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>性压抑心理测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .welcome-screen {
+            text-align: center;
+        }
+
+        .welcome-screen h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .welcome-screen p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .question-screen {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .question {
+            display: none;
+        }
+
+        .question.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 20px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            padding: 18px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .option:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+        }
+
+        .navigation {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            flex: 1;
+        }
+
+        .btn-primary {
+            flex: 1;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 30px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .score-circle .score {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .score-circle .label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .result-level {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .result-description {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: left;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .result-description h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .result-description ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .result-description li {
+            margin-bottom: 8px;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .navigation {
+                flex-direction: column;
+            }
+
+            .score-circle {
+                width: 150px;
+                height: 150px;
+            }
+
+            .score-circle .score {
+                font-size: 36px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>性压抑心理测试</h1>
+            <p>了解你的心理健康状态</p>
+        </div>
+
+        <div class="content">
+            <!-- 欢迎界面 -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <h2>欢迎参加测试</h2>
+                <p>
+                    本测试旨在帮助你了解自己在性观念、性态度方面的开放程度和心理状态。
+                    测试包含20道题目，每道题目有5个选项，请根据你的真实感受选择最符合的答案。
+                </p>
+                <p>
+                    测试结果仅供参考，不作为专业医疗诊断依据。
+                    请在放松的状态下完成测试，诚实地回答每一个问题。
+                </p>
+                <button class="btn" onclick="startTest()">开始测试</button>
+            </div>
+
+            <!-- 测试界面 -->
+            <div class="question-screen" id="questionScreen">
+                <div class="progress-text" id="progressText">第 1 / 20 题</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div id="questionsContainer"></div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()">上一题</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+
+            <!-- 结果界面 -->
+            <div class="result-screen" id="resultScreen">
+                <div class="score-circle">
+                    <div class="score" id="scoreValue">0</div>
+                    <div class="label">总分</div>
+                </div>
+                <div class="result-level" id="resultLevel"></div>
+                <div class="result-description" id="resultDescription"></div>
+                <button class="btn btn-restart" onclick="restartTest()">重新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试题目
+        const questions = [
+            {
+                question: "1. 你是否觉得谈论性相关话题让你感到不自在？",
+                options: [
+                    { text: "完全不会，很自然", value: 1 },
+                    { text: "偶尔会有点不自在", value: 2 },
+                    { text: "经常感到不自在", value: 3 },
+                    { text: "总是感到不自在", value: 4 },
+                    { text: "极度抗拒这类话题", value: 5 }
+                ]
+            },
+            {
+                question: "2. 你对亲密关系的态度是？",
+                options: [
+                    { text: "非常开放和接纳", value: 1 },
+                    { text: "比较开放", value: 2 },
+                    { text: "保守但能接受", value: 3 },
+                    { text: "比较保守和回避", value: 4 },
+                    { text: "极度保守和排斥", value: 5 }
+                ]
+            },
+            {
+                question: "3. 当看到影视作品中的亲密镜头时，你的反应是？",
+                options: [
+                    { text: "正常观看，无特殊感受", value: 1 },
+                    { text: "稍有不适但能接受", value: 2 },
+                    { text: "会感到尴尬", value: 3 },
+                    { text: "会回避或快进", value: 4 },
+                    { text: "完全无法接受", value: 5 }
+                ]
+            },
+            {
+                question: "4. 你觉得自己对性知识的了解程度如何？",
+                options: [
+                    { text: "非常了解且主动学习", value: 1 },
+                    { text: "有一定了解", value: 2 },
+                    { text: "了解较少", value: 3 },
+                    { text: "几乎不了解", value: 4 },
+                    { text: "刻意回避相关知识", value: 5 }
+                ]
+            },
+            {
+                question: "5. 你是否会因为性相关的想法而感到内疚？",
+                options: [
+                    { text: "从不会", value: 1 },
+                    { text: "很少会", value: 2 },
+                    { text: "有时会", value: 3 },
+                    { text: "经常会", value: 4 },
+                    { text: "总是会", value: 5 }
+                ]
+            },
+            {
+                question: "6. 你对自己身体的接纳程度如何？",
+                options: [
+                    { text: "完全接纳和欣赏", value: 1 },
+                    { text: "基本接纳", value: 2 },
+                    { text: "一般，有些不满", value: 3 },
+                    { text: "不太接纳", value: 4 },
+                    { text: "非常排斥", value: 5 }
+                ]
+            },
+            {
+                question: "7. 你是否能够自然地表达自己在亲密关系中的需求？",
+                options: [
+                    { text: "完全可以，很自然", value: 1 },
+                    { text: "大部分时候可以", value: 2 },
+                    { text: "偶尔可以", value: 3 },
+                    { text: "很难表达", value: 4 },
+                    { text: "完全无法表达", value: 5 }
+                ]
+            },
+            {
+                question: "8. 你对异性（或同性）的身体接触反应如何？",
+                options: [
+                    { text: "感觉自然舒适", value: 1 },
+                    { text: "基本能接受", value: 2 },
+                    { text: "有些紧张", value: 3 },
+                    { text: "很紧张排斥", value: 4 },
+                    { text: "极度恐惧", value: 5 }
+                ]
+            },
+            {
+                question: "9. 你认为性是生活中的重要组成部分吗？",
+                options: [
+                    { text: "是重要且自然的部分", value: 1 },
+                    { text: "比较重要", value: 2 },
+                    { text: "一般重要", value: 3 },
+                    { text: "不太重要", value: 4 },
+                    { text: "完全不重要或有害", value: 5 }
+                ]
+            },
+            {
+                question: "10. 你是否会主动学习两性关系和情感相关的知识？",
+                options: [
+                    { text: "经常主动学习", value: 1 },
+                    { text: "偶尔会学习", value: 2 },
+                    { text: "很少学习", value: 3 },
+                    { text: "从不主动学习", value: 4 },
+                    { text: "刻意回避", value: 5 }
+                ]
+            },
+            {
+                question: "11. 在公共场合看到情侣亲密行为时，你的感受是？",
+                options: [
+                    { text: "觉得很正常", value: 1 },
+                    { text: "能理解和接受", value: 2 },
+                    { text: "有些不适", value: 3 },
+                    { text: "很不舒服", value: 4 },
+                    { text: "非常反感", value: 5 }
+                ]
+            },
+            {
+                question: "12. 你对自己性取向的认知和接纳程度如何？",
+                options: [
+                    { text: "非常清晰且完全接纳", value: 1 },
+                    { text: "比较清晰和接纳", value: 2 },
+                    { text: "有些困惑", value: 3 },
+                    { text: "很困惑和不安", value: 4 },
+                    { text: "完全无法接受", value: 5 }
+                ]
+            },
+            {
+                question: "13. 你认为自己的性观念受传统文化影响的程度？",
+                options: [
+                    { text: "几乎不受影响，很开放", value: 1 },
+                    { text: "受影响较小", value: 2 },
+                    { text: "有一定影响", value: 3 },
+                    { text: "受影响较大", value: 4 },
+                    { text: "完全被传统观念束缚", value: 5 }
+                ]
+            },
+            {
+                question: "14. 你是否会因为性相关的梦境而感到焦虑？",
+                options: [
+                    { text: "从不焦虑，觉得正常", value: 1 },
+                    { text: "很少焦虑", value: 2 },
+                    { text: "有时会焦虑", value: 3 },
+                    { text: "经常焦虑", value: 4 },
+                    { text: "非常焦虑和恐慌", value: 5 }
+                ]
+            },
+            {
+                question: "15. 你对婚前性行为的态度是？",
+                options: [
+                    { text: "完全接受，个人自由", value: 1 },
+                    { text: "能理解和接受", value: 2 },
+                    { text: "有所保留", value: 3 },
+                    { text: "不太接受", value: 4 },
+                    { text: "完全不能接受", value: 5 }
+                ]
+            },
+            {
+                question: "16. 你是否能够舒适地与医生讨论性健康问题？",
+                options: [
+                    { text: "完全可以，很自然", value: 1 },
+                    { text: "基本可以", value: 2 },
+                    { text: "有些尴尬但能说", value: 3 },
+                    { text: "很难开口", value: 4 },
+                    { text: "完全无法讨论", value: 5 }
+                ]
+            },
+            {
+                question: "17. 你对性教育的态度如何？",
+                options: [
+                    { text: "非常支持，认为很重要", value: 1 },
+                    { text: "比较支持", value: 2 },
+                    { text: "一般，无所谓", value: 3 },
+                    { text: "不太支持", value: 4 },
+                    { text: "完全反对", value: 5 }
+                ]
+            },
+            {
+                question: "18. 你是否会因为性相关话题而与家人产生隔阂？",
+                options: [
+                    { text: "从不会，能自然交流", value: 1 },
+                    { text: "很少会", value: 2 },
+                    { text: "有时会", value: 3 },
+                    { text: "经常会", value: 4 },
+                    { text: "总是会，完全无法交流", value: 5 }
+                ]
+            },
+            {
+                question: "19. 你对自己情感需求的了解程度如何？",
+                options: [
+                    { text: "非常了解且能满足", value: 1 },
+                    { text: "比较了解", value: 2 },
+                    { text: "了解一般", value: 3 },
+                    { text: "不太了解", value: 4 },
+                    { text: "完全不了解或压抑", value: 5 }
+                ]
+            },
+            {
+                question: "20. 你认为自己在亲密关系中的状态是？",
+                options: [
+                    { text: "健康、开放、自在", value: 1 },
+                    { text: "比较健康自在", value: 2 },
+                    { text: "一般，有些问题", value: 3 },
+                    { text: "存在较多困扰", value: 4 },
+                    { text: "非常困扰和压抑", value: 5 }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+
+        // 初始化测试
+        function startTest() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('questionScreen').style.display = 'block';
+            renderQuestions();
+            showQuestion(0);
+        }
+
+        // 渲染所有问题
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.id = `question-${index}`;
+
+                const questionTitle = document.createElement('h3');
+                questionTitle.textContent = q.question;
+                questionDiv.appendChild(questionTitle);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                q.options.forEach((option, optionIndex) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.textContent = option.text;
+                    optionDiv.onclick = () => selectOption(index, optionIndex, option.value);
+                    optionsDiv.appendChild(optionDiv);
+                });
+
+                questionDiv.appendChild(optionsDiv);
+                container.appendChild(questionDiv);
+            });
+        }
+
+        // 选择选项
+        function selectOption(questionIndex, optionIndex, value) {
+            answers[questionIndex] = value;
+
+            // 更新选中状态
+            const options = document.querySelectorAll(`#question-${questionIndex} .option`);
+            options.forEach((opt, idx) => {
+                opt.classList.toggle('selected', idx === optionIndex);
+            });
+
+            // 自动跳转到下一题（延迟300ms以显示选中效果）
+            if (currentQuestion < questions.length - 1) {
+                setTimeout(() => {
+                    nextQuestion();
+                }, 300);
+            } else {
+                // 最后一题，300ms后显示完成按钮
+                setTimeout(() => {
+                    document.getElementById('nextBtn').textContent = '查看结果';
+                }, 300);
+            }
+        }
+
+        // 显示问题
+        function showQuestion(index) {
+            // 隐藏所有问题
+            document.querySelectorAll('.question').forEach(q => {
+                q.classList.remove('active');
+            });
+
+            // 显示当前问题
+            document.getElementById(`question-${index}`).classList.add('active');
+
+            // 更新进度
+            updateProgress();
+
+            // 更新按钮状态
+            document.getElementById('prevBtn').style.display = index === 0 ? 'none' : 'block';
+            
+            if (index === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = answers[index] !== null ? '查看结果' : '下一题';
+            } else {
+                document.getElementById('nextBtn').textContent = '下一题';
+            }
+
+            // 恢复选中状态
+            if (answers[index] !== null) {
+                const options = document.querySelectorAll(`#question-${index} .option`);
+                const selectedValue = answers[index];
+                options.forEach((opt, idx) => {
+                    if (questions[index].options[idx].value === selectedValue) {
+                        opt.classList.add('selected');
+                    }
+                });
+            }
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `第 ${currentQuestion + 1} / ${questions.length} 题`;
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                // 检查是否所有题目都已回答
+                if (answers.includes(null)) {
+                    alert('请完成所有题目后再查看结果');
+                    // 跳转到第一个未回答的题目
+                    const firstUnanswered = answers.indexOf(null);
+                    currentQuestion = firstUnanswered;
+                    showQuestion(currentQuestion);
+                } else {
+                    showResult();
+                }
+            }
+        }
+
+        // 上一题
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        // 显示结果
+        function showResult() {
+            const totalScore = answers.reduce((sum, val) => sum + val, 0);
+            
+            document.getElementById('questionScreen').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'block';
+            
+            // 动画显示分数
+            animateScore(totalScore);
+
+            // 根据分数给出评级和建议
+            const result = getResult(totalScore);
+            document.getElementById('resultLevel').textContent = result.level;
+            document.getElementById('resultDescription').innerHTML = result.description;
+        }
+
+        // 分数动画
+        function animateScore(targetScore) {
+            let currentScore = 0;
+            const duration = 1500;
+            const increment = targetScore / (duration / 16);
+
+            const timer = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= targetScore) {
+                    currentScore = targetScore;
+                    clearInterval(timer);
+                }
+                document.getElementById('scoreValue').textContent = Math.round(currentScore);
+            }, 16);
+        }
+
+        // 根据分数获取结果
+        function getResult(score) {
+            if (score <= 30) {
+                return {
+                    level: '健康开放型',
+                    description: `
+                        <h4>🎉 心理状态：非常健康</h4>
+                        <p>你对性和亲密关系持有健康、开放的态度。你能够自然地接纳自己的身体和情感需求，在这方面没有明显的心理压抑。</p>
+                        <h4>主要特征：</h4>
+                        <ul>
+                            <li>能够自然地讨论和学习相关知识</li>
+                            <li>对自己的身体和需求有良好的认知</li>
+                            <li>在亲密关系中能够健康地表达自己</li>
+                            <li>不会因为相关话题或想法感到内疚</li>
+                        </ul>
+                        <h4>建议：</h4>
+                        <p>继续保持这种健康的心态，并在适当的时候帮助身边的人建立正确的观念。记得在亲密关系中保持尊重和边界感。</p>
+                    `
+                };
+            } else if (score <= 50) {
+                return {
+                    level: '较为开放型',
+                    description: `
+                        <h4>😊 心理状态：比较健康</h4>
+                        <p>你对性和亲密关系的态度比较开放，虽然偶尔会有些保守的想法，但整体上能够健康地看待这些问题。</p>
+                        <h4>主要特征：</h4>
+                        <ul>
+                            <li>基本能够自然地讨论相关话题</li>
+                            <li>对自己的身体和情感有一定的了解</li>
+                            <li>在某些情况下可能会感到轻微不适</li>
+                            <li>受传统观念影响较小</li>
+                        </ul>
+                        <h4>建议：</h4>
+                        <p>继续保持开放的心态，可以多学习科学的性教育知识。在感到不适时，尝试探索这种感觉的来源，进一步提升自我认知。</p>
+                    `
+                };
+            } else if (score <= 70) {
+                return {
+                    level: '中等保守型',
+                    description: `
+                        <h4>🤔 心理状态：存在一定压抑</h4>
+                        <p>你对性和亲密关系持有较为保守的态度，受传统观念影响较大。在这方面存在一定程度的心理压抑，可能会影响你的情感表达和亲密关系。</p>
+                        <h4>主要特征：</h4>
+                        <ul>
+                            <li>讨论相关话题时经常感到不自在</li>
+                            <li>对自己的身体和需求认知不足</li>
+                            <li>有时会因相关想法感到内疚</li>
+                            <li>在亲密关系中难以自然表达</li>
+                        </ul>
+                        <h4>建议：</h4>
+                        <p>建议你通过阅读科学的性教育书籍来更新观念，了解这是人类正常的生理和心理需求。可以尝试与信任的朋友或心理咨询师交流，逐步建立健康的认知。</p>
+                    `
+                };
+            } else if (score <= 85) {
+                return {
+                    level: '较为压抑型',
+                    description: `
+                        <h4>😟 心理状态：存在明显压抑</h4>
+                        <p>你在性和亲密关系方面存在较严重的心理压抑，这可能源于传统观念、过往经历或家庭教育。这种状态可能会影响你的心理健康和人际关系。</p>
+                        <h4>主要特征：</h4>
+                        <ul>
+                            <li>对相关话题感到强烈的不适和抗拒</li>
+                            <li>难以接纳自己的身体和情感需求</li>
+                            <li>经常因相关想法感到焦虑和内疚</li>
+                            <li>在亲密关系中存在明显障碍</li>
+                        </ul>
+                        <h4>建议：</h4>
+                        <p><strong>建议寻求专业心理咨询师的帮助。</strong>通过专业的心理辅导，可以帮助你探索压抑的根源，重建健康的认知体系。这不是你的错，而是需要时间和专业支持来改善的状况。</p>
+                    `
+                };
+            } else {
+                return {
+                    level: '严重压抑型',
+                    description: `
+                        <h4>⚠️ 心理状态：严重压抑</h4>
+                        <p>你在性和亲密关系方面存在严重的心理压抑，这很可能已经影响到你的日常生活、心理健康和人际关系。这种状况需要得到重视和专业帮助。</p>
+                        <h4>主要特征：</h4>
+                        <ul>
+                            <li>对一切相关话题极度抗拒和恐惧</li>
+                            <li>完全无法接纳自己的正常需求</li>
+                            <li>深受传统观念束缚，产生严重内疚感</li>
+                            <li>可能影响正常的社交和亲密关系</li>
+                        </ul>
+                        <h4>重要建议：</h4>
+                        <p><strong>强烈建议你尽快寻求专业心理咨询或治疗。</strong>这种程度的压抑可能与深层的心理创伤或长期的负面教育有关。专业的心理治疗师可以帮助你安全地探索这些问题，逐步建立健康的认知和情感模式。</p>
+                        <p>请记住：寻求帮助是勇敢的表现，每个人都值得拥有健康、自由的心理状态。</p>
+                    `
+                };
+            }
+        }
+
+        // 重新测试
+        function restartTest() {
+            currentQuestion = 0;
+            answers = new Array(questions.length).fill(null);
+            document.getElementById('resultScreen').style.display = 'none';
+            document.getElementById('welcomeScreen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
